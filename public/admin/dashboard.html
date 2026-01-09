@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard | SKN Youth Observer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: #fafafa;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    button {
+      padding: 15px;
+      cursor: pointer;
+      background-color: blueviolet;
+      border-radius: 10px;
+      font-size: 17.5px;
+      transition: all 0.3s ease-in-out;
+    }
+    button:hover {
+      background-color: rgb(0, 211, 56);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Dashboard</h1>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <main>
+    <h3>Welcome to the SKN Youth Observer admin dashboard.</h3>
+
+    <ul>
+      <li><button><a href="create-article.html">Create Article</a></li></button>
+      <li><button><a href="articles.html">Manage Articles</a></li></button>
+    </ul>
+  </main>
+
+  <script type="module">
+    import { protectPage, logout } from "../js/auth.js";
+
+    // Only admins & editors allowed
+    protectPage(["admin", "editor"]);
+
+    document
+      .getElementById("logoutBtn")
+      .addEventListener("click", async () => {
+        await logout();
+        window.location.href = "/login.html";
+      });
+  </script>
+
+</body>
+</html>
