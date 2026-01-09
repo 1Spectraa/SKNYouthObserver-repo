@@ -18,31 +18,32 @@
         .login-container {
             background: white;
             padding: 20px;
-            border-radius: 5px;
+            border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .login-container h2 {
-            margin-bottom: 20px;
+            margin: 15px;
+            font-size: 30px;
         }
-        .login-container input[type="email"],
-        .login-container input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
+        #email, #password {
+            width: 90%;
+            padding: 15px;
+            margin: 10px;
             border: 1px solid #ccc;
-            border-radius: 3px;
+            border-radius: 7px;
         }
-        .login-container input[type="submit"] {
-            width: 100%;
+        #submit{
+            width: 98%;
             padding: 10px;
             background-color: #5cb85c;
             border: none;
             color: white;
-            border-radius: 3px;
+            border-radius: 10px;
             cursor: pointer;
         }
-        .login-container input[type="submit"]:hover {
-            background-color: #4cae4c;
+        #submit:hover {
+            transition: all 0.5s ease;
+            background-color: #d85c0a;
         }
     </style>
 </head> 
@@ -52,10 +53,10 @@
         <form action="/admin/login" method="POST">
             <input type="email" id="email" placeholder="Enter your email" required>
             <input type="password" id="password" placeholder="Enter your password" required>
-            <button type="submit" value="Login">Login</button>
+            <button type="submit" id="submit" value="Login">Login</button>
         </form>
     </div>
 
     <script type="module" src="/js/login.js"></script>
 </body>
-</html>2
+</html>
