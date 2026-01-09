@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        body {
+            font-family: Helvetica, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+        .login-container input[type="email"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .login-container input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #5cb85c;
+            border: none;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .login-container input[type="submit"]:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head> 
+<body>
+    <div class="login-container">
+        <h2>Admin Login</h2>
+        <form action="/admin/login" method="POST">
+            <input type="email" id="email" placeholder="Enter your email" required>
+            <input type="password" id="password" placeholder="Enter your password" required>
+            <button type="submit" value="Login">Login</button>
+        </form>
+    </div>
+
+    <script type="module" src="/js/login.js"></script>
+</body>
+</html>2

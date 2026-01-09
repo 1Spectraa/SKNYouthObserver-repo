@@ -20,3 +20,34 @@ export async function logout(){
 export function getCurrentUser() {
     return auth.getCurrentUser;
 }
+
+// Get user's role from Firestore
+
+export async function getUserRole(uid) {
+    const userDoc = await getDoc(doc(db, "users", uid));
+    if (userDoc.exists()) {
+        return userDoc.data().role;
+    } else {
+        throw new Error("No user record found");
+    }
+}
+
+// Protect admin/editor pages | allowedRoles = ['admin', 'editor']
+
+export function protectPage(allowedRoles) {
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            try {
+                const role = await getUserRole(user.uid);
+                if (!allowedRoles.includes(role)) {
+                    window.location.href = "/unauthorized.html";
+                }
+            } catch (error) {
+                console.error("Error fetching user role:", error);
+                window.location.href = "/login.html";
+            }
+        } else {
+            window.location.href = "/login.html";
+        }
+    });
+}
