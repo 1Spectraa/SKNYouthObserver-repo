@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor Dashboard - The SKN Youth Observer</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html">The SKN Youth Observer</a></div>
+        <ul class="nav-links">
+            <li><a href="index.html">View Site</a></li>
+            <li><a href="admin.html">Admin Panel</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="editor-card">
+            <h1>Create New Article</h1>
+            <form id="article-form">
+                <div class="form-group">
+                    <label>Headline</label>
+                    <input type="text" id="post-title" placeholder="Enter headline" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="post-category">
+                        <option value="Politics">Politics</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Education">Education</option>
+                        <option value="Tech">Tech</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Feature Image URL</label>
+                    <input type="url" id="post-image" placeholder="https://example.com/image.jpg" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Article Content</label>
+                    <textarea id="post-content" rows="10" placeholder="Write the story here..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">Publish Article</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/editor.js"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - The SKN Youth Observer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Table and Role Styles */
+        .management-table { width: 100%; border-collapse: collapse; margin: 2rem 0; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        th, td { padding: 1rem; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #f8f9fa; color: #666; font-size: 0.9rem; text-transform: uppercase; }
+        
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .role-admin { background: #ffebee; color: #c62828; }
+        .role-editor { background: #e3f2fd; color: #1565c0; }
+        .role-reader { background: #f5f5f5; color: #616161; }
+
+        select { padding: 5px; border-radius: 4px; border: 1px solid #ddd; outline: none; }
+        
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html">The SKN Youth Observer</a></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Back to Site</a></li>
+            <li><a href="editor.html" style="color: #e67e22; font-weight: bold;">+ Create Post</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <header class="admin-header">
+            <div>
+                <h1>Admin Command Center</h1>
+                <p id="admin-greeting" style="color: #666;"></p>
+            </div>
+        </header>
+
+        <section class="admin-grid">
+            <div class="stat-card">
+                <h4 id="total-users">0</h4>
+                <p>Total Community Members</p>
+            </div>
+            <div class="stat-card" style="border-left-color: #27ae60;">
+                <h4 id="total-articles">0</h4>
+                <p>Articles Published</p>
+            </div>
+            <div class="stat-card" style="border-left-color: #2980b9;">
+                <h4 id="editor-count">0</h4>
+                <p>Active Staff (Editors)</p>
+            </div>
+        </section>
+
+        <section class="activity-section">
+            <h3>User Permissions</h3>
+            <table class="management-table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>User ID</th>
+                        <th>Current Role</th>
+                        <th>Action: Change Role</th>
+                    </tr>
+                </thead>
+                <tbody id="user-list">
+                    </tbody>
+            </table>
+        </section>
+
+        <section class="activity-section">
+            <h3>Recent Activity</h3>
+            <ul id="recent-posts-list" class="activity-list">
+                </ul>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

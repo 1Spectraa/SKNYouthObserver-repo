@@ -90,3 +90,53 @@ async function handleLogout() {
 }
 
 updateNavbar();
+
+// Add this to the end of main.js
+async function setupNavbar() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const navLinks = document.querySelector('.nav-links');
+
+    if (user) {
+        // Fetch the user's role
+        const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+        if (profile) {
+            // If they are Admin or Editor, show the "Create Post" link
+            if (profile.role === 'admin' || profile.role === 'editor') {
+                const editorLi = document.createElement('li');
+                editorLi.innerHTML = '<a href="editor.html" style="color: #e67e22; font-weight: bold;">+ Create Post</a>';
+                navLinks.prepend(editorLi);
+            }
+
+            // If they are an Admin, show the "Admin Dashboard" link
+            if (profile.role === 'admin') {
+                const adminLi = document.createElement('li');
+                adminLi.innerHTML = '<a href="admin.html">Admin Panel</a>';
+                navLinks.prepend(adminLi);
+            }
+        }
+
+        // Add a Logout button for everyone who is logged in
+        const logoutLi = document.createElement('li');
+        logoutLi.innerHTML = '<a href="#" id="logout-link">Logout</a>';
+        navLinks.appendChild(logoutLi);
+
+        document.getElementById('logout-link').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+        });
+    } else {
+        // If not logged in, show Login link
+        const loginLi = document.createElement('li');
+        loginLi.innerHTML = '<a href="login.html">Login</a>';
+        navLinks.appendChild(loginLi);
+    }
+}
+
+// Run this on every page load
+setupNavbar();
