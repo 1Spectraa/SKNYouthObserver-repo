@@ -22,6 +22,10 @@
     <main class="article-container">
         <a href="index.html" class="back-link">← Back to News</a>
 
+        <div id="admin-controls" style="display:none; margin-bottom: 20px;">
+            <button id="edit-article-btn" class="btn-secondary" style="background:#3498db; color:white;">Edit Article</button>
+        </div>
+        
         <article id="full-article">
             <div class="article-header">
                 <span id="article-category" class="card-tag">Loading...</span>
@@ -37,6 +41,23 @@
                 <p>Please wait while we fetch the story...</p>
             </div>
         </article>
+        <section class="comments-section" style="margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px;">
+            <h3>Comments</h3>
+            
+            <div id="auth-to-comment" style="display:none; padding: 15px; background: #f9f9f9; border-radius: 8px; margin-bottom: 20px;">
+                <p>Want to join the conversation? <a href="login.html" style="color: #e67e22; font-weight: bold;">Log in here</a> to post a comment.</p>
+            </div>
+            
+            <form id="comment-form" style="display:none; margin-bottom: 30px;">
+                <textarea id="comment-text" placeholder="Share your thoughts..." required 
+                    style="width:100%; height:100px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; margin-bottom: 10px;"></textarea>
+                <button type="submit" class="btn-primary">Post Comment</button>
+            </form>
+        
+            <div id="comments-list">
+                <p style="color: gray;">Loading comments...</p>
+            </div>
+        </section>
     </main>
 
     <footer>

@@ -29,8 +29,8 @@
         </nav>
     </header>
 
-    <section class="hero" id="hero-section">
-        <div class="hero-content">
+    <section class="hero" id="featured-section">
+        <div class="hero-content" id="featured-content">
             <h1>Welcome to The SKN Youth Observer</h1>
             <p>Loading today's top stories...</p>
         </div>
@@ -40,9 +40,9 @@
         <h2>Latest Headlines</h2>
         
         <div class="filters">
-            <button onclick="filterNews('all')">All</button>
-            <button onclick="filterNews('Technology')">Technology</button>
-            <button onclick="filterNews('Politics')">Politics</button>
+            <button onclick="filterNews('all')" class="category-link">All</button>
+            <button onclick="filterNews('Technology')" class="category-link">Technology</button>
+            <button onclick="filterNews('Politics')"class="category-link">Politics</button>
         </div>
 
         <div id="news-grid" class="news-grid">

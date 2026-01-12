@@ -73,6 +73,35 @@
             <ul id="recent-posts-list" class="activity-list">
                 </ul>
         </section>
+
+        <section class="activity-section">
+            <div class="admin-header">
+                <h3>Article Management</h3>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="admin-search" placeholder="Search articles..." style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <select id="admin-filter-category">
+                        <option value="All">All Categories</option>
+                        <option value="Politics">Politics</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Education">Education</option>
+                        <option value="Tech">Tech</option>
+                    </select>
+                </div>
+            </div>
+            
+            <table class="management-table">
+                <thead>
+                    <tr>
+                        <th>Headline</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-articles-list">
+                    </tbody>
+            </table>
+        </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
