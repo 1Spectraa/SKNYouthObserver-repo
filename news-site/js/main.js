@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- LOGIC FOR HOME PAGE ---
 async function fetchAllArticles() {
-    const { data: articles, error } = await supabase
+    const { data: articles, error } = await supabaseClient
         .from('articles')
         .select('*')
         .order('created_at', { ascending: false });
@@ -46,7 +46,7 @@ async function fetchSingleArticle() {
     }
 
     // 2. Fetch that specific article
-    const { data: article, error } = await supabase
+    const { data: article, error } = await supabaseClient
         .from('articles')
         .select('*')
         .eq('id', articleId)
@@ -64,3 +64,29 @@ async function fetchSingleArticle() {
     document.getElementById('article-body').innerHTML = article.content;
     document.getElementById('article-date').textContent = `Published on ${new Date(article.created_at).toLocaleDateString()}`;
 }
+
+async function updateNavbar() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const authSection = document.getElementById('auth-section');
+
+    if (user) {
+        // User is logged in, show Logout and check for Admin link
+        const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+        authSection.innerHTML = `
+            ${profile?.role === 'admin' ? '<a href="admin.html">Admin</a>' : ''}
+            <button onclick="handleLogout()">Logout</button>
+        `;
+    }
+}
+
+async function handleLogout() {
+    await supabaseClient.auth.signOut();
+    window.location.reload();
+}
+
+updateNavbar();

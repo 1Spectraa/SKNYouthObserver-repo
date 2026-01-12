@@ -1,90 +1,52 @@
-// Toggle between Login and Signup UI
-const toggleBtn = document.getElementById('toggle-auth');
-let isLogin = true;
+document.addEventListener('DOMContentLoaded', () => {
+    const authForm = document.getElementById('auth-form');
 
-if (toggleBtn) {
-    toggleBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        isLogin = !isLogin;
-        document.getElementById('form-title').innerText = isLogin ? 'Sign In' : 'Sign Up';
-        document.getElementById('submit-btn').innerText = isLogin ? 'Sign In' : 'Sign Up';
-        toggleBtn.innerText = isLogin ? 'Sign Up' : 'Sign In';
-    });
-}
+    if (authForm) {
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorBox = document.getElementById('error-message');
+            const submitBtn = document.getElementById('submit-btn');
 
-// Handle Form Submission
-document.getElementById('auth-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const errorBox = document.getElementById('error-message');
+            // Hide previous errors
+            errorBox.style.display = 'none';
 
-    let result;
-    if (isLogin) {
-        result = await supabase.auth.signInWithPassword({ email, password });
-    } else {
-        result = await supabase.auth.signUp({ email, password });
-    }
+            // Check if we are on the Signup or Login page based on the button
+            const isSignup = submitBtn.innerText.includes('Sign Up');
 
-    if (result.error) {
-        errorBox.style.display = 'block';
-        errorBox.innerText = result.error.message;
-    } else {
-        window.location.href = 'index.html';
-    }
-});
+            try {
+                let result;
+                if (isSignup) {
+                    // SUPABASE SIGN UP
+                    result = await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password,
+                    });
+                } else {
+                    // SUPABASE LOGIN
+                    result = await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password,
+                    });
+                }
 
-// Helper function to check Role
-async function getUserRole() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
-
-    const { data } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-    
-    return data?.role;
-}
-
-// js/auth.js
-
-document.getElementById('auth-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const errorBox = document.getElementById('error-message');
-    const submitBtn = document.getElementById('submit-btn');
-
-    // Determine if we are on the signup page or login page based on button text
-    const isSignupPage = submitBtn.innerText.includes('Sign Up');
-
-    let result;
-
-    if (isSignupPage) {
-        // Sign Up Logic
-        result = await supabase.auth.signUp({
-            email: email,
-            password: password,
+                if (result.error) {
+                    errorBox.style.display = 'block';
+                    errorBox.innerText = result.error.message;
+                } else {
+                    if (isSignup) {
+                        alert("Signup successful! Please check your email for a confirmation link.");
+                    }
+                    // Redirect to home page on success
+                    window.location.href = 'index.html';
+                }
+            } catch (err) {
+                console.error("Auth Exception:", err);
+                errorBox.style.display = 'block';
+                errorBox.innerText = "An unexpected error occurred.";
+            }
         });
-    } else {
-        // Login Logic
-        result = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        });
-    }
-
-    if (result.error) {
-        errorBox.style.display = 'block';
-        errorBox.innerText = result.error.message;
-    } else {
-        // Success!
-        if (isSignupPage) {
-            alert("Check your email for the confirmation link!");
-        }
-        window.location.href = 'index.html';
     }
 });
