@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article - The Daily News</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="index.html">The Daily News</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="article-container">
+        <a href="index.html" class="back-link">← Back to News</a>
+
+        <article id="full-article">
+            <div class="article-header">
+                <span id="article-category" class="card-tag">Loading...</span>
+                <h1 id="article-title">Loading Headline...</h1>
+                <div class="article-meta">
+                    <span id="article-date">Published on ...</span>
+                </div>
+            </div>
+
+            <img id="article-image" src="" alt="" class="featured-image">
+
+            <div id="article-body" class="article-body">
+                <p>Please wait while we fetch the story...</p>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 The Daily News. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
