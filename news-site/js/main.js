@@ -1,16 +1,127 @@
 // --- GLOBAL STATE ---
 let allArticlesList = [];
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     setupNavbar();
     
-    if (document.getElementById('news-grid')) {
-        fetchAllArticles();
+    const isIndexPage = document.getElementById('news-grid');
+    const isArticlePage = document.getElementById('full-article');
+
+    if (isIndexPage) {
+        // 1. Start Carousel (Non-blocking)
+        if (typeof loadHeroCarousel === "function") loadHeroCarousel();
+        
+        // 2. FETCH DATA: Wait for the articles to arrive from Supabase
+        // Make sure fetchAllArticles() returns the data or saves it to window.allArticles
+        await fetchAllArticles(); 
+        
+        // 3. Setup the pill-button listeners
         setupFilters();
-    } else if (document.getElementById('full-article')) {
+
+        // 4. GET THE CATEGORY FROM URL
+        const params = new URLSearchParams(window.location.search);
+        const categoryParam = params.get('category') || 'All';
+
+        console.log("Applying category from URL:", categoryParam);
+        
+        // 5. CRITICAL: Filter the grid based on that URL parameter
+        filterByCategory(categoryParam);
+        
+        // 6. Highlight the Nav Tab
+        highlightActiveNavLink(categoryParam);
+
+        // Scroll to grid if a specific category is active
+        if (categoryParam !== 'All') {
+            setTimeout(() => {
+                const filterSection = document.querySelector('.filters');
+                if (filterSection) filterSection.scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+        }
+
+    } else if (isArticlePage) {
         fetchSingleArticle();
     }
 });
+
+/**
+ * Visual helper to highlight which Navbar link is currently active
+ */
+function highlightActiveNavLink(activeCategory) {
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    navLinks.forEach(link => {
+        const linkText = link.innerText.trim();
+        
+        // Logic: if current cat is 'All', highlight 'Home'. 
+        // Otherwise, match the text (e.g., 'Politics' matches 'Politics')
+        const isHomeMatch = (activeCategory === 'All' && linkText === 'Home');
+        const isCategoryMatch = (linkText === activeCategory);
+
+        if (isHomeMatch || isCategoryMatch) {
+            link.style.color = 'var(--accent)';
+            link.style.borderBottom = '2px solid var(--accent)';
+        } else {
+            link.style.color = ''; // Reset to default CSS
+            link.style.borderBottom = '';
+        }
+    });
+}
+
+let currentSlide = 0;
+let slideInterval;
+
+async function loadHeroCarousel() {
+    // 1. Fetch 3 most recent featured articles
+    const { data: featured, error } = await supabaseClient
+        .from('articles')
+        .select('*')
+        .eq('is_featured', true)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+    if (error || !featured || featured.length === 0) return;
+
+    const slider = document.getElementById('hero-slider');
+    const dotsContainer = document.getElementById('carousel-dots');
+
+    // 2. Inject Slides
+    slider.innerHTML = featured.map((art, index) => `
+        <div class="hero-slide" style="background-image: url('${art.image_url}')">
+            <div class="slide-content">
+                <span class="card-tag" style="color: #fff; border-bottom: 2px solid var(--accent);">${art.category}</span>
+                <h1 style="margin-top: 10px;">${art.title}</h1>
+                <a href="article.html?id=${art.id}" class="btn-primary" style="margin-top: 20px;">Read Story</a>
+            </div>
+        </div>
+    `).join('');
+
+    // 3. Create Dots
+    dotsContainer.innerHTML = featured.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></div>`).join('');
+
+    startAutoSlide(featured.length);
+}
+
+function goToSlide(index) {
+    currentSlide = index;
+    const slider = document.getElementById('hero-slider');
+    slider.style.transform = `translateX(-${index * 100}%)`;
+    
+    // Update dots
+    document.querySelectorAll('.dot').forEach((d, i) => {
+        d.classList.toggle('active', i === index);
+    });
+}
+
+function startAutoSlide(totalSlides) {
+    if (slideInterval) clearInterval(slideInterval);
+    slideInterval = setInterval(() => {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        goToSlide(currentSlide);
+    }, 5000); // Slides every 5 seconds
+}
+
+// Ensure you call this in your DOMContentLoaded
+loadHeroCarousel();
 
 // --- NEWS FEED LOGIC ---
 async function fetchAllArticles() {
@@ -166,7 +277,7 @@ async function setupNavbar() {
     if (profile) {
         if (profile.role === 'admin' || profile.role === 'editor') {
             const editorLi = document.createElement('li');
-            editorLi.innerHTML = '<a href="editor.html" style="color: #e67e22; font-weight: bold;">+ Create Post</a>';
+            editorLi.innerHTML = '<a href="editor.html" style="color: #e67e22; font-weight: bold;">Create Post</a>';
             navLinks.prepend(editorLi);
         }
         if (profile.role === 'admin') {
@@ -247,6 +358,7 @@ async function setupCommentForm(articleId) {
         authMsg.style.display = 'block';
     }
 }
+
 // This matches the 'onclick' in your HTML buttons
 window.filterNews = (category) => {
     // Update button colors
@@ -267,3 +379,42 @@ window.filterNews = (category) => {
         renderGrid(filtered);
     }
 };
+
+/**
+ * Enhanced Filter Function
+ * This handles both the button clicks and the navbar links
+ */
+/**
+ * Filters the news grid based on category and updates button UI
+ * @param {string} category - The category string (e.g., 'Sports', 'Politics', or 'All')
+ */
+function filterByCategory(category) {
+    console.log("Filtering grid for:", category);
+
+    // 1. Update the Pill Buttons UI (the ones below the Hero)
+    const filterButtons = document.querySelectorAll('.category-link');
+    filterButtons.forEach(btn => {
+        const btnText = btn.innerText.trim();
+        
+        // Check if button should be active
+        if (btnText === category || (category === 'All' && btnText === 'All')) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // 2. Filter the Data
+    // We use window.allArticles which was populated during fetchAllArticles()
+    if (!window.allArticles || window.allArticles.length === 0) {
+        console.warn("No articles loaded yet to filter.");
+        return;
+    }
+
+    const filteredData = (category === "All" || !category) 
+        ? window.allArticles 
+        : window.allArticles.filter(art => art.category === category);
+
+    // 3. Re-render the grid with only the filtered articles
+    renderNewsGrid(filteredData);
+}

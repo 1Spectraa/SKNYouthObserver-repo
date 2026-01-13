@@ -2,25 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor Dashboard - The SKN Youth Observer</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo"><a href="index.html">The SKN Youth Observer</a></div>
-        <ul class="nav-links">
-            <li><a href="index.html">View Site</a></li>
-            <li><a href="admin.html">Admin Panel</a></li>
-        </ul>
-    </nav>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="index.html">The SKN Youth Observer</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">View Site</a></li>
+                <li><a href="admin.html">Admin Panel</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <main class="container">
         <div class="editor-card">
-            <h1>Create New Article</h1>
-            <form id="article-form">
+            <h1>Create / Edit Article</h1>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Fill in the details below to publish your news story.</p>
+            
+            <form id="article-form" class="editor-form">
                 <div class="form-group">
                     <label>Headline</label>
-                    <input type="text" id="post-title" placeholder="Enter headline" required>
+                    <input type="text" id="post-title" placeholder="Enter a catchy headline..." required>
                 </div>
                 
                 <div class="form-group">
@@ -35,35 +42,43 @@
     
                 <div class="form-group">
                     <label>Feature Image Upload</label>
-                    <input type="file" id="post-image-file" accept="image/*" required>
+                    <input type="file" id="post-image-file" accept="image/*">
+                    <small style="display: block; color: var(--text-muted); margin-top: -15px; margin-bottom: 15px;">
+                        Recommended size: 1200x600px.
+                    </small>
                 </div>
     
-                <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" id="is-featured" style="width: auto;">
-                    <label for="is-featured">Set as Featured Article (Hero Section)</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="is-featured">
+                    <label for="is-featured" style="margin-bottom: 0;">Set as Featured Article (Hero Section)</label>
                 </div>
     
                 <div class="form-group">
                     <label>Article Content</label>
-                    <textarea id="post-content" rows="10" placeholder="Write the story here..." required></textarea>
+                    <textarea id="post-content" placeholder="Tell the story..." required></textarea>
                 </div>
     
-                <div style="display: flex; gap: 10px;">
-                    <button type="button" id="preview-btn" class="btn-secondary" style="background: #6c757d; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 4px; cursor: pointer;">Preview Mode</button>
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
                     <button type="submit" class="btn-primary">Publish Article</button>
+                    <button type="button" id="preview-btn" class="category-link">Preview Mode</button>
                 </div>
             </form>
     
-            <div id="preview-container" style="display:none; margin-top: 2rem; padding: 2rem; border: 2px dashed #ddd; background: #fafafa;">
-                <div style="display: flex; justify-content: space-between;">
-                    <h2>Live Preview</h2>
-                    <button type="button" onclick="document.getElementById('preview-container').style.display='none'">Close</button>
+            <div id="preview-container" style="display:none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: var(--primary);">Live Preview</h2>
+                    <button type="button" class="delete-btn" onclick="document.getElementById('preview-container').style.display='none'">[ Close Preview ]</button>
                 </div>
-                <hr>
-                <div id="preview-content"></div>
+                <hr style="margin-bottom: 20px; border: 0; border-top: 1px solid #eee;">
+                <div id="preview-content" class="article-body">
+                    </div>
             </div>
         </div>
     </main>
+
+    <footer>
+        <p>&copy; 2026 The SKN Youth Observer. All rights reserved.</p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>

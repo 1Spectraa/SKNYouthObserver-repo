@@ -17,23 +17,23 @@
             <div class="logo">
                 <a href="index.html">The SKN Youth Observer</a>
             </div>
-            <ul class="nav-links">
-                <li><a href="#" class="active">Home</a></li>
-                <li><a href="#">World</a></li>
-                <li><a href="#">Tech</a></li>
-                <li><a href="#">Sports</a></li>
-            </ul>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-filter">Home</a></li>
+                    <li><a href="index.html?category=Politics" class="nav-filter">Politics</a></li>
+                    <li><a href="index.html?category=World" class="nav-filter">World</a></li>
+                    <li><a href="index.html?category=Sports" class="nav-filter">Sports</a></li>
+                    <li><a href="index.html?category=Tech" class="nav-filter">Tech</a></li>
+                </ul>
             <div class="auth-buttons" id="auth-section">
                 <a href="login.html" class="btn-primary">Login</a>
             </div>
         </nav>
     </header>
 
-    <section class="hero" id="featured-section">
-        <div class="hero-content" id="featured-content">
-            <h1>Welcome to The SKN Youth Observer</h1>
-            <p>Loading today's top stories...</p>
-        </div>
+    <section class="hero-carousel-container">
+        <div id="hero-slider" class="hero-slider">
+            </div>
+        <div id="carousel-dots" class="carousel-dots"></div>
     </section>
 
     <main class="container">
@@ -41,6 +41,8 @@
         
         <div class="filters">
             <button onclick="filterNews('all')" class="category-link">All</button>
+            <button onclick="filterNews('World')" class="category-link">World</button>
+            <button onclick="filterNews('Sports')" class="category-link">Sports</button>
             <button onclick="filterNews('Technology')" class="category-link">Technology</button>
             <button onclick="filterNews('Politics')"class="category-link">Politics</button>
         </div>

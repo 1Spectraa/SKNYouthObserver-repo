@@ -1,8 +1,52 @@
-// --- GLOBAL STATE ---
+/**
+ * --- GLOBAL FUNCTIONS ---
+ * These must be available to the 'onclick' handlers in the HTML.
+ */
+
+window.deleteArticle = async (articleId) => {
+    // Debugging: Check if the function even triggers
+    console.log("Attempting to delete article:", articleId);
+
+    const confirmed = confirm("Are you sure? This will permanently remove the article and its comments.");
+    if (!confirmed) return;
+
+    try {
+        const { error } = await supabaseClient
+            .from('articles')
+            .delete()
+            .eq('id', articleId);
+
+        if (error) throw error;
+
+        alert("Article deleted.");
+        
+        // Refresh the data without page reload
+        if (typeof loadAnalytics === 'function') loadAnalytics();
+        if (typeof loadArticles === 'function') loadArticles(); 
+    } catch (err) {
+        console.error("Delete failed:", err.message);
+        alert("Delete failed: " + err.message);
+    }
+};
+
+window.updateUserRole = async (userId, newRole) => {
+    const { error } = await supabaseClient.from('profiles').update({ role: newRole }).eq('id', userId);
+    if (error) alert("Update failed: " + error.message);
+    else {
+        alert("Role updated successfully!");
+        loadAnalytics(); 
+        loadUsers(); 
+    }
+};
+
+// --- STATE MANAGEMENT ---
 let allArticles = [];
 
+/**
+ * --- PAGE INITIALIZATION ---
+ */
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Security Check: Redirect if not logged in or not an Admin
+    // 1. Security Check
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) { 
         window.location.href = 'login.html'; 
@@ -21,21 +65,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // Display greeting
-    document.getElementById('admin-greeting').innerText = `Logged in as: ${profile.email}`;
+    const greeting = document.getElementById('admin-greeting');
+    if (greeting) greeting.innerText = `Logged in as: ${profile.email}`;
 
     // 2. Initialize Dashboard
     loadAnalytics();
     loadUsers();
-    loadArticles(); // This replaces loadRecentArticles
+    loadArticles();
 
-    // 3. Search & Filter Listeners
-    document.getElementById('admin-search').addEventListener('input', filterArticles);
-    document.getElementById('admin-filter-category').addEventListener('change', filterArticles);
+    // 3. Listeners
+    const searchInput = document.getElementById('admin-search');
+    const categoryFilter = document.getElementById('admin-filter-category');
+    
+    if (searchInput) searchInput.addEventListener('input', filterArticles);
+    if (categoryFilter) categoryFilter.addEventListener('change', filterArticles);
 });
 
 /**
- * Fetches counts for the Stat Cards
+ * --- DATA LOADING FUNCTIONS ---
  */
 async function loadAnalytics() {
     const { count: userCount } = await supabaseClient.from('profiles').select('*', { count: 'exact', head: true });
@@ -47,12 +94,11 @@ async function loadAnalytics() {
     document.getElementById('editor-count').innerText = staffCount || 0;
 }
 
-/**
- * User Management Logic
- */
 async function loadUsers() {
     const { data: profiles } = await supabaseClient.from('profiles').select('*').order('email', { ascending: true });
     const tbody = document.getElementById('user-list');
+    if (!tbody) return;
+
     tbody.innerHTML = profiles.map(p => `
         <tr>
             <td>${p.email}</td>
@@ -69,19 +115,6 @@ async function loadUsers() {
     `).join('');
 }
 
-window.updateUserRole = async (userId, newRole) => {
-    const { error } = await supabaseClient.from('profiles').update({ role: newRole }).eq('id', userId);
-    if (error) alert("Update failed: " + error.message);
-    else {
-        alert("Role updated successfully!");
-        loadAnalytics(); 
-        loadUsers(); 
-    }
-};
-
-/**
- * Article Management Logic (Search & Filter)
- */
 async function loadArticles() {
     const { data: articles, error } = await supabaseClient
         .from('articles')
@@ -90,12 +123,14 @@ async function loadArticles() {
 
     if (error) return console.error("Error loading articles:", error);
 
-    allArticles = articles; // Store globally for search
+    allArticles = articles;
     renderArticleTable(allArticles);
 }
 
 function renderArticleTable(data) {
     const tbody = document.getElementById('admin-articles-list');
+    if (!tbody) return;
+    
     if (!data || data.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No articles found.</td></tr>';
         return;
@@ -107,8 +142,8 @@ function renderArticleTable(data) {
             <td>${a.category}</td>
             <td>${a.is_featured ? '<span class="status-badge role-admin">FEATURED</span>' : 'Standard'}</td>
             <td>
-                <button onclick="window.location.href='editor.html?edit=${a.id}'" style="cursor:pointer; background:#3498db; color:white; border:none; padding:5px 10px; border-radius:4px;">Edit</button>
-                <button onclick="deleteArticle('${a.id}')" style="cursor:pointer; background:#ff4757; color:white; border:none; padding:5px 10px; border-radius:4px; margin-left:5px;">Delete</button>
+                <button onclick="window.location.href='editor.html?edit=${a.id}'" class="btn-primary" style="padding:5px 10px; font-size: 0.8rem;">Edit</button>
+                <button onclick="deleteArticle('${a.id}')" class="delete-btn" style="padding:5px 10px; font-size: 0.8rem; background: var(--danger); color: white; border-radius: 4px;">Delete</button>
             </td>
         </tr>
     `).join('');
@@ -125,26 +160,3 @@ function filterArticles() {
     });
     renderArticleTable(filtered);
 }
-
-window.deleteArticle = async (articleId) => {
-    const confirmed = confirm("Are you sure? This will permanently remove the article and its comments.");
-    if (!confirmed) return;
-
-    try {
-        const { error } = await supabaseClient
-            .from('articles')
-            .delete()
-            .eq('id', articleId);
-
-        if (error) throw error;
-
-        alert("Article deleted.");
-        // Re-run the load functions to refresh the UI without a page reload
-        loadAnalytics();
-        loadArticles(); 
-    } catch (err) {
-        console.error("Delete failed:", err.message);
-        alert("Delete failed: " + err.message);
-    }
-};
-
